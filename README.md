@@ -1,5 +1,5 @@
 # sudoku :video_game:
-a sudoku game
+a sudoku gui game
 
 ## Getting Started :memo:
 * choose the game **difficulty**
