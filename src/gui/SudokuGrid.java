@@ -1,17 +1,21 @@
 package gui;
 
+import content.GridGenerator;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class SudokuGrid {
 	private int filledFields;
 	SudokuCell[][] cells = new SudokuCell[9][9];
 	private JFrame mainFrame;
-	private JPanel panelForSolvingButton;
-	private JPanel smallerGridPanel;
+	private JPanel panelForOptionButtons;
+	private PanelForSudokuSmallGrids smallerGridsPanel;
+	private String difficulty;
+	private ArrayList<SudokuCell> startingCells = new ArrayList<>();
 
-	//todo change to protected after testing
-	public SudokuGrid() {
+	SudokuGrid() {
 		mainFrame = new JFrame("sudoku-solver");
 	}
 
@@ -20,16 +24,14 @@ public class SudokuGrid {
 	}
 
 	void createAndShowGUI() {
-		JOptionPane.showMessageDialog(new JPanel(), "Please fill in the grid by clicking on the desired cell");
-
 		mainFrame.setLayout(new BorderLayout());
 
-		smallerGridPanel = new JPanel(new GridLayout(3, 3));
-		mainFrame.add(smallerGridPanel, BorderLayout.CENTER);
+		smallerGridsPanel = new PanelForSudokuSmallGrids(new GridLayout(3, 3));
+		mainFrame.add(smallerGridsPanel, BorderLayout.CENTER);
 
-		panelForSolvingButton = new JPanel();
-		panelForSolvingButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		mainFrame.add(panelForSolvingButton, BorderLayout.SOUTH);
+		panelForOptionButtons = new JPanel();
+		panelForOptionButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		mainFrame.add(panelForOptionButtons, BorderLayout.SOUTH);
 
 		mainFrame.pack();
 		mainFrame.setSize(600,600);
@@ -37,8 +39,8 @@ public class SudokuGrid {
 		mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		mainFrame.setResizable(false);
 
-
-		panelForSolvingButton.add(new SolveButton(this));
+		panelForOptionButtons.add(new ResetButton(this));
+		panelForOptionButtons.add(new DoneButton(this));
 		addRegularButtons();
 	}
 
@@ -50,16 +52,15 @@ public class SudokuGrid {
 
 		for (int layerOfGrids = 0; layerOfGrids < 3; ++layerOfGrids) {
 			for (int gridOfLayer = 0; gridOfLayer < 3; ++gridOfLayer) {
-				JComponent smallerGrid = new JPanel(new GridLayout(3, 3));
+				SudokuSmallGrid smallerGrid = new SudokuSmallGrid(new GridLayout(3, 3));
 				smallerGrid.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-				smallerGridPanel.add(smallerGrid);
+				smallerGridsPanel.add(smallerGrid);
 
 				for (int j = 0; j < 3; ++j) {
 					for (int k = 0; k < 3; ++k) {
-						var cell = new JButton();
-						SudokuCell sudokuCell = new SudokuCell(this, cell, currentRow, currentCol);
+						SudokuCell sudokuCell = new SudokuCell(this, currentRow, currentCol);
 						cells[currentRow][currentCol] = sudokuCell;
-						smallerGrid.add(cell);
+						smallerGrid.addAndSaveCell(sudokuCell);
 						currentCol++;
 					}
 					currentRow++;
@@ -75,8 +76,31 @@ public class SudokuGrid {
 			currentRow = firstRowOfLayer;
 			smallerGridFirstCol = currentCol = 0;
 		}
+		generate();
 		mainFrame.setVisible(true);
 	}
+
+	private void generate(){
+		int[][] gridTemplate = new GridGenerator(difficulty).generate();
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				int value = gridTemplate[i][j];
+				if(value != 0) {
+					SudokuCell cell = cells[i][j];
+					cell.setValue(value);
+					startingCells.add(cell);
+				}
+			}
+		}
+	}
+
+	protected void closeMainFrame(){
+		mainFrame.dispose();
+	}
+
+	public String getDifficulty() { return difficulty; }
+
+	public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
 
 	public int getFilledFields() {
 		return filledFields;
@@ -84,5 +108,17 @@ public class SudokuGrid {
 
 	public void setFilledFields(int filledFields) {
 		this.filledFields = filledFields;
+	}
+
+	public SudokuCell[][] getCells() {
+		return cells;
+	}
+
+	public PanelForSudokuSmallGrids getSmallerGridsPanel() {
+		return smallerGridsPanel;
+	}
+
+	public ArrayList<SudokuCell> getStartingCells() {
+		return startingCells;
 	}
 }

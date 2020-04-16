@@ -8,7 +8,7 @@ public class SudokuGameStarter {
     }
 
     private void start() {
-        sudokuGrid.display();
+        new StartOptionPanel(sudokuGrid);
     }
 
     public static void main(String[] args) {

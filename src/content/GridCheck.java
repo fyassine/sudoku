@@ -1,4 +1,4 @@
-package checker;
+package content;
 
 import gui.SudokuCell;
 import gui.SudokuGrid;

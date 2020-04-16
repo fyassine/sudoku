@@ -5,9 +5,9 @@ import content.GridCheck;
 import javax.swing.*;
 import java.awt.*;
 
-public class SolveButton extends JButton{
+public class DoneButton extends JButton{
 
-    protected SolveButton(SudokuGrid currentGrid) {
+    protected DoneButton(SudokuGrid currentGrid) {
         setText("Done ?");
         setBackground(Color.white);
         setFont(new Font("Arial", Font.PLAIN, 17));
