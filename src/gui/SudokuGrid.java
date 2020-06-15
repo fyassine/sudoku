@@ -89,6 +89,7 @@ public class SudokuGrid {
 					SudokuCell cell = cells[i][j];
 					cell.setValue(value);
 					startingCells.add(cell);
+					filledFields++;
 				}
 			}
 		}
